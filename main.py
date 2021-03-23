@@ -152,6 +152,11 @@ def CatToSubvector(category,feature_name,categorical_library,embedding_library,v
 #            categorical_library,
 #            embedding_library
 #        ))
+    if category=="BU" and category=="cat10":
+        print("category:",category)
+        print("feature_name:",feature_name)
+        print("categorical_library:",categorical_library)
+        print("embedding_library:",embedding_library)
 #     [print(valu,"\n") for valu in [category,feature_name,categorical_library,embedding_library]]
     raw_idx = torch.tensor([categorical_library[feature_name][category]], dtype=torch.long)
 #     if (verbose): print("embedding_library[feature_name]:",embedding_library[feature_name],"\n","raw_idx:",raw_idx)
@@ -207,7 +212,7 @@ class ClaimsDataset(Dataset):
         subsubvects = []
         for col in categorical_features.columns:
             cat_col = (categorical_features[col]).tolist()
-#             print("cat_col:",cat_col,"\n")
+            print("col:",col,"\n")
 #             cat_emb = cat_col
 #             cat_emb = cat_col.apply(lambda x: CatToSubvector(x,col,self.categoricals,self.embeddings,True))
 #             if (i%2):# == 0 and i!=0):
@@ -217,7 +222,8 @@ class ClaimsDataset(Dataset):
 #             else:
 #                 cat_emb = cat_col.apply(lambda x: CatToSubvector(x,col,self.categoricals,self.embeddings,False))
             cat_embs = CatToSubvector(cat_col[0],col,self.categoricals,self.embeddings,True)
-            for x in cat_col[1:]:
+            for ix,x in enumerate(cat_col[1:],1):
+                if x=="BU": print(ix)
                 new_emb = CatToSubvector(x,col,self.categoricals,self.embeddings,True)
                 cat_embs = torch.cat((cat_embs,new_emb))
 #             cat_emb = [CatToSubvector(x,col,self.categoricals,self.embeddings) for x in cat_col]
