@@ -141,22 +141,17 @@ def BuildEmbedlibrary(features):
 
 #function that gets respective embedding for given feature value
 def CatToSubvector(category,feature_name,categorical_library,embedding_library,verbose=False):
-#    if verbose:
+    if verbose:
 #         print(verbose)
 #         for info in [categorical_library]:
 # #         for info in [category,feature_name,categorical_library,embedding_library]:
 #             print(info,"\n")
-#        print("category: {}; feature_name: {}; categorical_library: {}; embedding_library: {}".format(
-#            category,
-#            feature_name,
-#            categorical_library,
-#            embedding_library
-#        ))
-    if category=="BU" and category=="cat10":
-        print("category:",category)
-        print("feature_name:",feature_name)
-        print("categorical_library:",categorical_library)
-        print("embedding_library:",embedding_library)
+        print("category: {}; feature_name: {}; categorical_library: {}; embedding_library: {}".format(
+            category,
+            feature_name,
+            categorical_library,
+            embedding_library
+        ))
 #     [print(valu,"\n") for valu in [category,feature_name,categorical_library,embedding_library]]
     raw_idx = torch.tensor([categorical_library[feature_name][category]], dtype=torch.long)
 #     if (verbose): print("embedding_library[feature_name]:",embedding_library[feature_name],"\n","raw_idx:",raw_idx)
@@ -212,7 +207,7 @@ class ClaimsDataset(Dataset):
         subsubvects = []
         for col in categorical_features.columns:
             cat_col = (categorical_features[col]).tolist()
-            print("col:",col,"\n")
+#             print("cat_col:",cat_col,"\n")
 #             cat_emb = cat_col
 #             cat_emb = cat_col.apply(lambda x: CatToSubvector(x,col,self.categoricals,self.embeddings,True))
 #             if (i%2):# == 0 and i!=0):
@@ -221,10 +216,9 @@ class ClaimsDataset(Dataset):
 #                 print("cat_emb:",cat_emb,"\n")
 #             else:
 #                 cat_emb = cat_col.apply(lambda x: CatToSubvector(x,col,self.categoricals,self.embeddings,False))
-            cat_embs = CatToSubvector(cat_col[0],col,self.categoricals,self.embeddings,True)
-            for ix,x in enumerate(cat_col[1:],1):
-                if x=="BU": print(ix)
-                new_emb = CatToSubvector(x,col,self.categoricals,self.embeddings,True)
+            cat_embs = CatToSubvector(cat_col[0],col,self.categoricals,self.embeddings,False)
+            for x in cat_col[1:]:
+                new_emb = CatToSubvector(x,col,self.categoricals,self.embeddings,False)
                 cat_embs = torch.cat((cat_embs,new_emb))
 #             cat_emb = [CatToSubvector(x,col,self.categoricals,self.embeddings) for x in cat_col]
 #             print(col,"cat_embs.shape:",cat_embs.shape,"\n")
@@ -263,24 +257,27 @@ class ClaimsDataset(Dataset):
         return x,y
     
     def __len__(self):
-        return len(self.vectors)
+        return len(self.data)
 
 
 # In[20]:
 
 
+##TODO add functionality for unlabbeled data
 def LoadData(batch_size_order=2):
     bs = 2*batch_size_order
-    train_set,test_set = ClaimsDataset('./train.csv',labelled=True),ClaimsDataset('./test.csv')
-    train_loader,test_loader = DataLoader(claimset,batch_size=bs,shuffle=True)
+#     train_set,test_set = ClaimsDataset('./train.csv',labelled=True),ClaimsDataset('./test.csv')
+    train_set = ClaimsDataset('./train.csv',labelled=True)
+#     train_loader,test_loader = DataLoader(claimset,batch_size=bs,shuffle=True)
+    train_loader = DataLoader(train_set,batch_size=bs,shuffle=True)
     
-    return trainloader,testloader
+    return trainloader
 
 
 # In[21]:
 
 
-trainloader,testloader = LoadData()
+trainloader = LoadData()
 # print("cd.categoricals:",cd.categoricals,"\n","cd.embeddings:",cd.embeddings,"\n","cd.vectors.shape:",cd.vectors.shape)
 x,y = trainloader[0]
 print("x:",x)
