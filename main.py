@@ -271,7 +271,7 @@ def LoadData(batch_size_order=2):
 #     train_loader,test_loader = DataLoader(claimset,batch_size=bs,shuffle=True)
     train_loader = DataLoader(train_set,batch_size=bs,shuffle=True)
     
-    return trainloader
+    return train_loader
 
 
 # In[21]:
@@ -279,12 +279,16 @@ def LoadData(batch_size_order=2):
 
 trainloader = LoadData()
 # print("cd.categoricals:",cd.categoricals,"\n","cd.embeddings:",cd.embeddings,"\n","cd.vectors.shape:",cd.vectors.shape)
-x,y = trainloader[0]
-print("x:",x)
-print("y:",y)
+i = 0
+for x,y in trainloader:
+    if i%1000
+        print("i:",i)
+        print("x:",x)
+        print("y:",y)
 
+    i+=1
 
-# In[ ]:
+    # In[ ]:
 
 
 
